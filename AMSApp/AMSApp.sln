@@ -1,0 +1,19 @@
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "AMSApp", "http://localhost/AMSCM_ZJ/AMSApp.csproj", "{5C38FFBD-57A1-4757-BE82-28D1A77E33BA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Default = Debug|Default
+		Release|Default = Release|Default
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5C38FFBD-57A1-4757-BE82-28D1A77E33BA}.Debug|Default.ActiveCfg = Debug|.NET
+		{5C38FFBD-57A1-4757-BE82-28D1A77E33BA}.Debug|Default.Build.0 = Debug|.NET
+		{5C38FFBD-57A1-4757-BE82-28D1A77E33BA}.Release|Default.ActiveCfg = Release|.NET
+		{5C38FFBD-57A1-4757-BE82-28D1A77E33BA}.Release|Default.Build.0 = Release|.NET
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

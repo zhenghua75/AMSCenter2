@@ -1,0 +1,124 @@
+﻿<#@ template language="C#" debug="True" hostspecific="True" #>
+<#@ output extension=".cs" #>
+<#@ assembly name="System" #>
+<#@ assembly name="System.Core" #>
+<#@ assembly name="System.Data" #>
+<#@ assembly name="System.xml" #>
+<#@ assembly name="System.xml.Linq" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.Data.SqlClient" #>
+<#@ import namespace="System.Data" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Linq" #>
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Data.Entity;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+
+namespace AMSCM.Models 
+{		
+		<#
+			string connectionString = "data source=localhost;Integrated Security=SSPI;Initial Catalog=AMSCM_XG_ZX;";//ConfigurationManager.ConnectionStrings["FairiesMemberManage"].ConnectionString;
+			SqlConnection conn = new SqlConnection(connectionString); 
+			conn.Open(); 
+			System.Data.DataTable schema = conn.GetSchema("Tables"); 
+			string selectQuery = "select * from @tableName"; 
+			SqlCommand command = new SqlCommand(selectQuery,conn); 
+			SqlDataAdapter ad = new SqlDataAdapter(command); 
+			System.Data.DataSet ds = new DataSet(); 
+			
+			foreach(System.Data.DataRow row in schema.Rows) 
+			{ 				
+			if(row["table_type"].ToString() == "BASE TABLE" && !row["TABLE_NAME"].ToString().EndsWith("tracking")&&row["TABLE_NAME"].ToString()!="tbCommCodeTmp"
+			&&row["TABLE_NAME"].ToString()!="tbCommCodeTmp"
+			&&row["TABLE_NAME"].ToString()!="tbConsItemHung"
+			&&row["TABLE_NAME"].ToString()!="tbEmpSignTmp"
+			&&row["TABLE_NAME"].ToString()!="tbEmployeeTmp"
+			&&row["TABLE_NAME"].ToString()!="tbAssChange"
+			&&row["TABLE_NAME"].ToString()!="tbGoods_tmp"
+			&&row["TABLE_NAME"].ToString()!="tbGoods_20101130"
+			&&row["TABLE_NAME"].ToString()!="tbEmpSchLog"
+			&&row["TABLE_NAME"].ToString()!="tbDeptMapInfo"
+			&&row["TABLE_NAME"].ToString()!="tbCommCode"
+			&&row["TABLE_NAME"].ToString()!="tbAssociatorDownUpTmp"
+			&&row["TABLE_NAME"].ToString()!="tbBillDownUpTmp"
+			&&row["TABLE_NAME"].ToString()!="tbBusiLogDownUpTmp"
+			&&row["TABLE_NAME"].ToString()!="tbConsItemDownUpTmp"
+			&&row["TABLE_NAME"].ToString()!="tbFillFeeDownUpTmp"
+			&&row["TABLE_NAME"].ToString()!="tbIntegralLogDownUpTmp")
+			{
+			#> 			
+		public class <#= row["TABLE_NAME"].ToString() #> : INotifyPropertyChanged							
+		{
+			<# 									
+                ds.Tables.Clear();
+				command.CommandText = selectQuery.Replace("@tableName",row["TABLE_NAME"].ToString()); 
+				ad.FillSchema(ds, SchemaType.Mapped, row["TABLE_NAME"].ToString());
+                
+				int order=0;
+				foreach (DataColumn dc in ds.Tables[0].Columns)
+				{	#>			
+			private <#= dc.DataType.Name #><# if(dc.AllowDBNull && dc.DataType.Name!="String"&& dc.DataType.Name != "Byte[]"){  #>?<# } #> _<#= dc.ColumnName #>; 
+				<#if(ds.Tables[0].PrimaryKey.Contains(dc))
+				{					
+				#>		
+			
+			[Key]
+			[Column(Order=<#=order#>)]
+			<# if(!dc.AllowDBNull){#>[Required()]<#}#>
+			<# if(dc.DataType.Name=="Guid"){#>[DatabaseGenerated(DatabaseGeneratedOption.Identity)]<#}#>
+			<#
+					order ++;
+				}#>			 			
+			public <#= dc.DataType.Name #><# if(dc.AllowDBNull && dc.DataType.Name!="String" && dc.DataType.Name != "Byte[]"){  #>?<# } #> <#= dc.ColumnName #> 
+			{
+				get { return _<#= dc.ColumnName #>;}
+				set
+				{
+					 _<#= dc.ColumnName #> = value;
+					 OnPropertyChanged(new PropertyChangedEventArgs("<#= dc.ColumnName #>"));
+				}
+			}						
+				<#}#>	
+			public event PropertyChangedEventHandler PropertyChanged;
+        	public void OnPropertyChanged(PropertyChangedEventArgs e)
+        	{
+	            if (PropertyChanged != null)
+	                PropertyChanged(this, e);
+        	}
+		}							
+			<#}}#>
+
+		public partial class AMSCM:DbContext
+		{
+		<#
+		foreach(System.Data.DataRow row in schema.Rows) 
+		{ 				
+		if(row["table_type"].ToString() == "BASE TABLE"&& !row["TABLE_NAME"].ToString().EndsWith("tracking")
+		&&row["TABLE_NAME"].ToString()!="tbCommCodeTmp"
+			&&row["TABLE_NAME"].ToString()!="tbConsItemHung"
+			&&row["TABLE_NAME"].ToString()!="tbEmpSignTmp"
+			&&row["TABLE_NAME"].ToString()!="tbEmployeeTmp"
+			&&row["TABLE_NAME"].ToString()!="tbAssChange"
+			&&row["TABLE_NAME"].ToString()!="tbGoods_tmp"
+			&&row["TABLE_NAME"].ToString()!="tbGoods_20101130"
+			&&row["TABLE_NAME"].ToString()!="tbEmpSchLog"
+			&&row["TABLE_NAME"].ToString()!="tbDeptMapInfo"
+			&&row["TABLE_NAME"].ToString()!="tbCommCode"
+			&&row["TABLE_NAME"].ToString()!="tbAssociatorDownUpTmp"
+			&&row["TABLE_NAME"].ToString()!="tbBillDownUpTmp"
+			&&row["TABLE_NAME"].ToString()!="tbBusiLogDownUpTmp"
+			&&row["TABLE_NAME"].ToString()!="tbConsItemDownUpTmp"
+			&&row["TABLE_NAME"].ToString()!="tbFillFeeDownUpTmp"
+			&&row["TABLE_NAME"].ToString()!="tbIntegralLogDownUpTmp"
+		)
+		{
+		#> 	
+			public DbSet<<#= row["TABLE_NAME"].ToString() #>> <#= row["TABLE_NAME"].ToString()#> {get;set;}
+		<#}}#>
+
+		}
+}
